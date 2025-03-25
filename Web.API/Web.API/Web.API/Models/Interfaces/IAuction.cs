@@ -4,9 +4,11 @@
     {
         string ID { get; set; }
         string VehicleID { get; set; }
-        float CurrentBid { get; set; }
+        decimal CurrentBid { get; set; }
         bool IsActive { get; set; }
-        string StartDate { get; set; }
-        string EndDate { get; set; }
+        DateTime StartDate { get; set; }
+        DateTime EndDate { get; set; }
+        AuctionDTO ToDto();
+        IAuction ToAuction(AuctionDTO auctionDTO);
     }
 }

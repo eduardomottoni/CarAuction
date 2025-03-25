@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.API.Models
 {
     public class AuctionDTO
     {
-        string ID { get; set; }
-        string VehicleID { get; set; }
-        float CurrentBid { get; set; }
-        bool IsActive { get; set; }
-        string StartDate { get; set; }
-        string EndDate { get; set; }
+        public string ID { get; set; }
+        public string VehicleID { get; set; }
+        public decimal CurrentBid { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }
