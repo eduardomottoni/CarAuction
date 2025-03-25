@@ -24,9 +24,21 @@ namespace Web.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            try
+            {
+                var addedVehicle = await _vehicleService.AddVehicleAsync(vehicle);
+                return CreatedAtAction(nameof(GetVehicle), new { id = addedVehicle.ID }, addedVehicle);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
-            var addedVehicle = await _vehicleService.AddVehicleAsync(vehicle);
-            return CreatedAtAction(nameof(GetVehicle), new { id = addedVehicle.ID }, addedVehicle);
+            
         }
 
         // GET: api/Vehicle
@@ -50,6 +62,11 @@ namespace Web.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Vehicle>> GetVehicle(string id)
         {
+            if (id == null)
+            {
+                return BadRequest("ID is required.");
+            }
+
             var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
 
             if (vehicle == null)

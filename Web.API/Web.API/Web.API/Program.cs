@@ -1,12 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Web.API.Data;
 using Web.API.Controllers;
+using Web.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IAuctionService, AuctionService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -29,13 +34,8 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
     app.MapOpenApi();
-}
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
     app.UseSwaggerUI();
-};
+}
 
 app.UseHttpsRedirection();
 

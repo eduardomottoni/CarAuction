@@ -22,6 +22,12 @@ namespace Web.API.Services
 
         public async Task<Vehicle> AddVehicleAsync(Vehicle vehicle)
         {
+            bool exists = await _context.Vehicle.AnyAsync(v => v.ID == vehicle.ID);
+            if (exists)
+            {
+                throw new InvalidOperationException($"This is a vehicle register with this ID");
+            }
+
             _context.Vehicle.Add(vehicle);
             await _context.SaveChangesAsync();
             return vehicle;
