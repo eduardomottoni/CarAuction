@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.94-alpha">
+  <PropertyGroup>
+    <StartupCommand>npm run dev</StartupCommand>
+    <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
+    <BuildCommand>npm run build</BuildCommand>
+    <ProductionBuildCommand>npm run build</ProductionBuildCommand>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Add these debug-specific properties -->
+    <JavaScriptDebuggerPort>9229</JavaScriptDebuggerPort>
+    <EnableTypeScriptDebug>true</EnableTypeScriptDebug>
+    <StartupCommandWorkingDirectory>C:\Users\eotoni\source\repos\CarAuction\Web.Client</StartupCommandWorkingDirectory>
+  </PropertyGroup>
+</Project>
