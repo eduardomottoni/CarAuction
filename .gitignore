@@ -2,3 +2,6 @@ Web.API/Web.API/Web.API/obj/*
 Web.API/Web.API/Web.API/bin/*
 Web.API/Web.API/.vs/*
 
+/.vs
+/Web.API/bin/Debug/net9.0
+/Web.API/obj
