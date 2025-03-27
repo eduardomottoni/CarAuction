@@ -32,7 +32,17 @@ namespace Web.API.Models
 
         public AuctionDTO ToDto()
         {
-            throw new NotImplementedException();
+            return (new AuctionDTO
+            {
+                ID = this.ID,
+                VehicleID = this.VehicleID,
+                CurrentBid = this.CurrentBid,
+                IsActive = this.IsActive,
+                StartDate = this.StartDate,
+                EndDate = this.EndDate
+            });
         }
+
     }
+
 }

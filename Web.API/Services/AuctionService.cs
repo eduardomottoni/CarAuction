@@ -7,9 +7,10 @@ namespace Web.API.Services
 {
     public interface IAuctionService
     {
-        Task<Auction> StartAuctionAsync(string vehicleId, DateTime startDate, DateTime endDate, string? auctionId = null);
+        Task<Auction> StartAuctionAsync(string vehicleId, DateTime startDate, DateTime endDate, bool isActive, string? auctionId = null, decimal? startingBid = null);
         Task<Auction> PlaceBidAsync(string auctionId, decimal bidAmount);
         Task<Auction> CloseAuctionAsync(string auctionId);
+        Task<Auction> DeleteAuctionAsync(string auctionId);
         Task<Auction> GetAuctionByIdAsync(string auctionId);
         Task<IEnumerable<Auction>> GetAuctionsAsync();
     }
@@ -23,7 +24,7 @@ namespace Web.API.Services
             _context = context;
         }
 
-        public async Task<Auction> StartAuctionAsync(string vehicleId, DateTime startDate, DateTime endDate, string? auctionId = null)
+        public async Task<Auction> StartAuctionAsync(string vehicleId, DateTime startDate, DateTime endDate, bool isActive, string? auctionId = null, decimal? startingBid = null)
         {
             var vehicle = await _context.Vehicle.FindAsync(vehicleId);
             if (vehicle == null)
@@ -35,13 +36,19 @@ namespace Web.API.Services
             {
                 throw new ArgumentException("Start date must be before end date.");
             }
+            var id = auctionId ?? Guid.NewGuid().ToString();
+            var existingAuction = await _context.Auctions.FindAsync(id);
+            if(existingAuction != null)
+            {
+                throw new InvalidOperationException("Auction with ID already exists.");
+            }
 
             var auction = new Auction
             {
-                ID = auctionId ?? Guid.NewGuid().ToString(),
+                ID = id,
                 VehicleID = vehicleId,
-                CurrentBid = vehicle.StartingBid,
-                IsActive = true,
+                CurrentBid = startingBid ?? vehicle.StartingBid,
+                IsActive = isActive,
                 StartDate = startDate,
                 EndDate = endDate
             };
@@ -76,6 +83,18 @@ namespace Web.API.Services
             return auction;
         }
 
+        public async Task<Auction> DeleteAuctionAsync(string auctionId)
+        {
+            var auction = await _context.Auctions.FindAsync(auctionId);
+            if (auction == null)
+            {
+                throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
+            }
+            _context.Remove(auction);
+            await _context.SaveChangesAsync();
+            return auction;
+
+        }
         public async Task<Auction> CloseAuctionAsync(string auctionId)
         {
             var auction = await _context.Auctions.FindAsync(auctionId);

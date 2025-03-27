@@ -18,7 +18,7 @@ namespace Web.API.Controllers
 
         // POST: api/Vehicle
         [HttpPost]
-        public async Task<ActionResult<Vehicle>> AddVehicle(Vehicle vehicle)
+        public async Task<ActionResult<VehicleDTO>> AddVehicle(Vehicle vehicle)
         {
             if (!ModelState.IsValid)
             {
@@ -33,9 +33,10 @@ namespace Web.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                Console.WriteLine(ex.Message);
+                return Problem();
             }
 
             
@@ -43,7 +44,7 @@ namespace Web.API.Controllers
 
         // GET: api/Vehicle
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles(
+        public async Task<ActionResult<IEnumerable<VehicleDTO>>> GetVehicles(
             [FromQuery] string? manufacturer = null,
             [FromQuery] string? type = null,
             [FromQuery] decimal? minPrice = null,
@@ -55,12 +56,12 @@ namespace Web.API.Controllers
             if (!vehicles.Any())
                 return NotFound("No vehicles found matching the criteria.");
 
-            return Ok(vehicles);
+            return Ok(vehicles.Select(v=>v.ToDTO());
         }
 
         // GET: api/Vehicle/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Vehicle>> GetVehicle(string id)
+        public async Task<ActionResult<VehicleDTO>> GetVehicle(string id)
         {
             if (id == null)
             {
@@ -74,7 +75,7 @@ namespace Web.API.Controllers
                 return NotFound($"Vehicle with ID {id} not found.");
             }
 
-            return Ok(vehicle);
+            return Ok(vehicle.ToDTO());
         }
     }
 }
