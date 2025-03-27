@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Web.API.Models.Interfaces;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Web.API.Models
 {
@@ -38,7 +39,19 @@ namespace Web.API.Models
 
         public VehicleDTO ToDTO()
         {
-            throw new NotImplementedException();
+            return (new VehicleDTO
+            {
+                ID = this.ID,
+                Manufacturer = this.Manufacturer,
+                Model = this.Model,
+                Year = this.Year,
+                StartingBid = this.StartingBid,
+                Type = this.Type,
+                NumberOfDoors = this.NumberOfDoors,
+                NumberOfSeats = this.NumberOfSeats,
+                LoadCapacity = this.LoadCapacity
+
+            });
         }
     }
 }

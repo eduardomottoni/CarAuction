@@ -5,3 +5,6 @@ Web.API/Web.API/.vs/*
 /.vs
 /Web.API/bin/Debug/net9.0
 /Web.API/obj
+/Web.API/src/bin/Debug/net9.0
+/Web.API/src/obj
+/Web.API/Tests/Unit/obj

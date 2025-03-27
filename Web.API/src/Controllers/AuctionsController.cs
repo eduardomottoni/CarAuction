@@ -77,12 +77,40 @@ namespace Web.API.Controllers
                 var auction = await _auctionService.CloseAuctionAsync(request.AuctionId);
                 return Ok(auction.ToDto());
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
+            }
         }
-        // POST: api/Auctions/Close
+        // POST: api/Auctions/Active
+        [HttpPost("Active")]
+        public async Task<ActionResult<AuctionDTO>> ActiveAuction([FromBody] ActiveAuctionRequest request)
+        {
+            try
+            {
+                var auction = await _auctionService.ActiveAuctionAsync(request.AuctionId);
+                return Ok(auction.ToDto());
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
+            }
+        }
+        // POST: api/Auctions/Delete
         [HttpPost("Delete")]
         public async Task<ActionResult<AuctionDTO>> DeleteAuction([FromBody] DeleteAuctionRequest request)
         {
@@ -91,25 +119,46 @@ namespace Web.API.Controllers
                 var auction = await _auctionService.DeleteAuctionAsync(request.AuctionId);
                 return Ok(auction.ToDto());
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
             }
         }
         // GET: api/Auctions/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<AuctionDTO>> GetAuction(string? id)
         {
-            if(id == null)
+            try
             {
-                return BadRequest("Id is required");
+                if (id == null)
+                {
+                    return BadRequest("Id is required");
+                }
+                var auction = await _auctionService.GetAuctionByIdAsync(id);
+                if (auction == null)
+                {
+                    return NotFound($"Auction with ID {id} not found.");
+                }
+                return Ok(auction.ToDto());
             }
-            var auction = await _auctionService.GetAuctionByIdAsync(id);
-            if (auction == null)
+            catch (InvalidOperationException ex)
             {
-                return NotFound($"Auction with ID {id} not found.");
+                return BadRequest(ex.Message);
             }
-            return Ok(auction.ToDto());
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
+            }
         }
         // GET: api/Auctions
         [HttpGet()]
@@ -146,6 +195,10 @@ namespace Web.API.Controllers
     }
 
     public class CloseAuctionRequest
+    {
+        public string AuctionId { get; set; }
+    }
+    public class ActiveAuctionRequest
     {
         public string AuctionId { get; set; }
     }

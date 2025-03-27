@@ -18,6 +18,21 @@ namespace Web.API.Models
         public string? LoadCapacity { get; set; }
         public int? NumberOfSeats { get; set; }
         public int? NumberOfDoors { get; set; }
+        public Vehicle FromDTO()
+        {
+            return (new Vehicle
+            {
+                ID = this.ID,
+                Model = this.Model,
+                Year = this.Year,
+                StartingBid = this.StartingBid,
+                Manufacturer = this.Manufacturer,
+                Type = this.Type,
+                LoadCapacity = this.LoadCapacity,
+                NumberOfSeats = this.NumberOfSeats,
+                NumberOfDoors = this.NumberOfDoors
+            });
+        }
     }
 
 }

@@ -7,7 +7,7 @@ namespace Web.API.Services
     public interface IVehicleService
     {
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
-        Task<IEnumerable<Vehicle>> GetVehiclesAsync(string? manufacturer, string? type, decimal? minPrice, decimal? maxPrice, string? year);
+        Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest);
         Task<Vehicle?> GetVehicleByIdAsync(string id);
     }
 
@@ -34,28 +34,30 @@ namespace Web.API.Services
         }
 
         public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(
-            string? manufacturer = null,
-            string? type = null,
-            decimal? minPrice = null,
-            decimal? maxPrice = null,
-            string? year = null)
+            VehicleRequest vehicleRequest)
         {
+            if (vehicleRequest == null)
+            {
+                var vehicles = await _context.Vehicle.AsQueryable().ToListAsync();
+                if (!vehicles.Any())
+                    throw new KeyNotFoundException("No vehicles found matching the criteria.");
+            }
             var query = _context.Vehicle.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(vehicleRequest.manufacturer))
+                query = query.Where(v => v.Manufacturer.ToLower().Contains(vehicleRequest.manufacturer.ToLower()));
 
-            if (!string.IsNullOrEmpty(manufacturer))
-                query = query.Where(v => v.Manufacturer.ToLower().Contains(manufacturer.ToLower()));
+            if (!string.IsNullOrEmpty(vehicleRequest.type))
+                query = query.Where(v => v.Type.ToLower() == vehicleRequest.type.ToLower());
 
-            if (!string.IsNullOrEmpty(type))
-                query = query.Where(v => v.Type.ToLower() == type.ToLower());
+            if (vehicleRequest.minPrice.HasValue)
+                query = query.Where(v => v.StartingBid >= vehicleRequest.minPrice.Value);
 
-            if (minPrice.HasValue)
-                query = query.Where(v => v.StartingBid >= minPrice.Value);
+            if (vehicleRequest.maxPrice.HasValue)
+                query = query.Where(v => v.StartingBid <= vehicleRequest.maxPrice.Value);
 
-            if (maxPrice.HasValue)
-                query = query.Where(v => v.StartingBid <= maxPrice.Value);
-
-            if (!string.IsNullOrEmpty(year))
-                query = query.Where(v => v.Year == year);
+            if (!string.IsNullOrEmpty(vehicleRequest.year))
+                query = query.Where(v => v.Year == vehicleRequest.year);
 
             return await query.ToListAsync();
         }

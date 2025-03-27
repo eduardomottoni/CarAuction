@@ -10,6 +10,7 @@ namespace Web.API.Services
         Task<Auction> StartAuctionAsync(string vehicleId, DateTime startDate, DateTime endDate, bool isActive, string? auctionId = null, decimal? startingBid = null);
         Task<Auction> PlaceBidAsync(string auctionId, decimal bidAmount);
         Task<Auction> CloseAuctionAsync(string auctionId);
+        Task<Auction> ActiveAuctionAsync(string auctionId);
         Task<Auction> DeleteAuctionAsync(string auctionId);
         Task<Auction> GetAuctionByIdAsync(string auctionId);
         Task<IEnumerable<Auction>> GetAuctionsAsync();
@@ -74,7 +75,7 @@ namespace Web.API.Services
 
             if (bidAmount <= auction.CurrentBid)
             {
-                throw new ArgumentException("Bid amount must be greater than the current bid.");
+                throw new InvalidOperationException("Bid amount must be greater than the current bid.");
             }
 
             auction.CurrentBid = bidAmount;
@@ -102,8 +103,27 @@ namespace Web.API.Services
             {
                 throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
             }
-
+            if (auction.IsActive == false)
+            {
+                throw new InvalidOperationException("Auction is already closed.");
+            }
             auction.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            return auction;
+        } 
+        public async Task<Auction> ActiveAuctionAsync(string auctionId)
+        {
+            var auction = await _context.Auctions.FindAsync(auctionId);
+            if (auction == null)
+            {
+                throw new KeyNotFoundException($"Auction with ID {auctionId} not found.");
+            }
+            if (auction.IsActive == true)
+            {
+                throw new InvalidOperationException("Auction is already active.");
+            }
+            auction.IsActive = true;
             await _context.SaveChangesAsync();
 
             return auction;
@@ -124,5 +144,7 @@ namespace Web.API.Services
             var auctionList = await _context.Auctions.ToListAsync();
             return auctionList;
         }
+
+
     }
 }
