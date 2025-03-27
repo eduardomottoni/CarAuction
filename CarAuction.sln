@@ -5,11 +5,6 @@ VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.API", "Web.API\Web.API.csproj", "{B33D167D-E0D8-4D3E-8E2E-FFC1A1225535}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Web.Client", "Web.Client\Web.Client.esproj", "{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B33D167D-E0D8-4D3E-8E2E-FFC1A1225535} = {B33D167D-E0D8-4D3E-8E2E-FFC1A1225535}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,11 +15,6 @@ Global
 		{B33D167D-E0D8-4D3E-8E2E-FFC1A1225535}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B33D167D-E0D8-4D3E-8E2E-FFC1A1225535}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B33D167D-E0D8-4D3E-8E2E-FFC1A1225535}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41BF0B5A-3C44-4449-921F-F5BCF2EF969B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

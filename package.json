@@ -2,7 +2,8 @@
   "name": "car-auction",
   "version": "1.0.0",
   "scripts": {
-    "start:api": "cd Web.API && dotnet run",
+    "setup": "cd Web.API && dotnet ef database update",
+    "start:api": "cd Web.API && dotnet run --launch-profile https",
     "start:client": "cd Web.Client && npm run dev",
     "dev": "concurrently \"npm run start:api\" \"npm run start:client\""
   }

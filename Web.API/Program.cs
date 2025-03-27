@@ -5,18 +5,6 @@ using Web.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ReactPolicy",
-        builder =>
-        {
-            builder
-                .WithOrigins("http://localhost:5173") // Vite default port
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-});
 
 // Add services to the container.
 
@@ -36,9 +24,6 @@ builder.Services.AddDbContext<CarAuctionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
-
-// Use CORS
-app.UseCors("ReactPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

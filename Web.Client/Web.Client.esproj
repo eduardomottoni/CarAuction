@@ -7,9 +7,11 @@
     <ProductionBuildCommand>npm run build</ProductionBuildCommand>
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
     <ShouldRunBuildScript>false</ShouldRunBuildScript>
-    <!-- Add these debug-specific properties -->
     <JavaScriptDebuggerPort>9229</JavaScriptDebuggerPort>
     <EnableTypeScriptDebug>true</EnableTypeScriptDebug>
-    <StartupCommandWorkingDirectory>C:\Users\eotoni\source\repos\CarAuction\Web.Client</StartupCommandWorkingDirectory>
+    <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)</StartupCommandWorkingDirectory>
+     Add these debugging properties 
+    <NodeDebugging>true</NodeDebugging>
+    <DebugWebBootstrapper>true</DebugWebBootstrapper>
   </PropertyGroup>
 </Project>
