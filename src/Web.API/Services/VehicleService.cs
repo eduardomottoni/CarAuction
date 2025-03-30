@@ -46,18 +46,11 @@ namespace Web.API.Services
             await _context.SaveChangesAsync();
             return vehicle;
         }
-
-        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(
-            VehicleRequest vehicleRequest)
+       
+        public IQueryable<Vehicle> GetQuery(VehicleRequest vehicleRequest)
         {
-            if (vehicleRequest == null)
-            {
-                var vehicles = await _context.Vehicle.AsQueryable().ToListAsync();
-                if (!vehicles.Any())
-                    throw new KeyNotFoundException("No vehicles found matching the criteria.");
-            }
             var query = _context.Vehicle.AsQueryable();
-            
+
             if (!string.IsNullOrEmpty(vehicleRequest.manufacturer))
                 query = query.Where(v => v.Manufacturer.ToLower().Contains(vehicleRequest.manufacturer.ToLower()));
 
@@ -72,6 +65,21 @@ namespace Web.API.Services
 
             if (!string.IsNullOrEmpty(vehicleRequest.year))
                 query = query.Where(v => v.Year == vehicleRequest.year);
+
+            return query;
+        }
+
+        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest)
+        {
+            if (vehicleRequest == null)
+            {
+                var vehicles = await _context.Vehicle.ToListAsync();
+                if (!vehicles.Any())
+                    throw new KeyNotFoundException("No vehicles found matching the criteria.");
+                return vehicles;
+            }
+
+            var query = GetQuery(vehicleRequest);
 
             return await query.ToListAsync();
         }

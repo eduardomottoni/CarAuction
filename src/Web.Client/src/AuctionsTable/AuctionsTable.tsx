@@ -23,7 +23,7 @@ const AuctionTable: React.FC = () => {
       const data = await response.json();
       setAuctions(data);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      setError(error instanceof Error ? error.message : 'Error fetching auctions');
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +45,7 @@ const AuctionTable: React.FC = () => {
       });
         if (!response.ok) {
             const errorBody = await response.text();
-            throw new Error(errorBody || 'Erro desconhecido');
+            throw new Error(errorBody || 'Unknown error');
         }
       await fetchAuctions();
       setIsModalOpen(false);
@@ -61,10 +61,13 @@ const AuctionTable: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ auctionId, bidAmount })
             });
-            if (!response.ok) throw new Error('Failed to place bid');
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(errorBody || 'Unknown error');
+            }
             await fetchAuctions();
         } catch (error) {
-            setError(error instanceof Error ? error.message : 'Failed to place bid');
+            alert(error);
         }
     }
         const handleOpenBidForm = async (auction: Auction) => {
@@ -80,10 +83,13 @@ const AuctionTable: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })
       });
-      if (!response.ok) throw new Error('Failed to close auction');
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(errorBody || 'Unknown error');
+        }
       await fetchAuctions();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to close auction');
+      alert(error)
     }
   };
 
@@ -94,10 +100,13 @@ const AuctionTable: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })
       });
-      if (!response.ok) throw new Error('Failed to activate auction');
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(errorBody || 'Unknown error');
+        }
       await fetchAuctions();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to activate auction');
+        alert(error);
     }
   };
 
@@ -108,10 +117,13 @@ const AuctionTable: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })
       });
-      if (!response.ok) throw new Error('Failed to delete auction');
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(errorBody || 'Unknown error');
+        }
       await fetchAuctions();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to delete auction');
+        alert(error);
     }
   };
 

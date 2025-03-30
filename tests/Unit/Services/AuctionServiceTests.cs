@@ -1,167 +1,129 @@
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Moq.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using Web.API.Data;
 using Web.API.Models;
 using Web.API.Services;
 using Xunit;
+namespace Web.API.Tests.Services;
 
-namespace Web.API.Tests.Services
+public class AuctionServiceTests
 {
-    public class AuctionServiceTests
+    private readonly Mock<CarAuctionContext> _mockContext;
+    private readonly AuctionService _auctionService;
+    private readonly List<Vehicle> _vehicles;
+    private readonly List<Auction> _auctions;
+
+    public AuctionServiceTests()
     {
-        private readonly Mock<CarAuctionContext> _mockContext;
-        private readonly AuctionService _auctionService;
-
-        public AuctionServiceTests()
+        // Initialize test data
+        _vehicles = new List<Vehicle>
         {
-            _mockContext = new Mock<CarAuctionContext>();
-            _auctionService = new AuctionService(_mockContext.Object);
-        }
+            new Vehicle { ID = "V1", Model = "Model 3", StartingBid = 35000M },
+            new Vehicle { ID = "V2", Model = "F-150", StartingBid = 45000M }
+        };
 
-        [Fact]
-        public async Task StartAuctionAsync_ShouldStartAuction()
+        _auctions = new List<Auction>
         {
-            // Arrange
-            var vehicleId = "vehicle1";
-            var startDate = DateTime.Now;
-            var endDate = DateTime.Now.AddDays(1);
-            var vehicle = new Vehicle { ID = vehicleId, StartingBid = 1000 };
-            var dbSetMock = new Mock<DbSet<Vehicle>>();
-            dbSetMock.Setup(m => m.FindAsync(vehicleId)).ReturnsAsync(vehicle);
-            _mockContext.Setup(c => c.Vehicle).Returns(dbSetMock.Object);
+            new Auction { ID = "A1", VehicleID = "V1", CurrentBid = 37500M, IsActive = true, StartDate = DateTime.Now.AddDays(-5), EndDate = DateTime.Now.AddDays(5) },
+            new Auction { ID = "A2", VehicleID = "V2", CurrentBid = 45000M, IsActive = false, StartDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(-2) }
+        };
 
-            var auctionDbSetMock = new Mock<DbSet<Auction>>();
-            _mockContext.Setup(c => c.Auctions).Returns(auctionDbSetMock.Object);
+        _mockContext = new Mock<CarAuctionContext>(new DbContextOptions<CarAuctionContext>());
+        _mockContext.Setup(c => c.Vehicle).ReturnsDbSet(_vehicles);
+        _mockContext.Setup(c => c.Auctions).ReturnsDbSet(_auctions);
 
-            // Act
-            var auction = await _auctionService.StartAuctionAsync(vehicleId, startDate, endDate, true);
+        _mockContext.Setup(m => m.Auctions.FindAsync(It.IsAny<object[]>()))
+    .ReturnsAsync((object[] ids) => _auctions.FirstOrDefault(a => a.ID == ids[0] as string));
+        
+        _mockContext.Setup(m => m.Vehicle.FindAsync(It.IsAny<object[]>()))
+    .ReturnsAsync((object[] ids) => _vehicles.FirstOrDefault(a => a.ID == ids[0] as string));
 
-            // Assert
-            Assert.NotNull(auction);
-            Assert.Equal(vehicleId, auction.VehicleID);
-            Assert.Equal(1000, auction.CurrentBid);
-            Assert.True(auction.IsActive);
-            Assert.Equal(startDate, auction.StartDate);
-            Assert.Equal(endDate, auction.EndDate);
-        }
+        _auctionService = new AuctionService(_mockContext.Object);
+    }
 
-        [Fact]
-        public async Task PlaceBidAsync_ShouldPlaceBid()
-        {
-            // Arrange
-            var auctionId = "auction1";
-            var bidAmount = 2000;
-            var auction = new Auction { ID = auctionId, CurrentBid = 1000, IsActive = true };
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.Setup(m => m.FindAsync(auctionId)).ReturnsAsync(auction);
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
+    [Fact]
+    public async Task GetAuctionsAsync_ReturnsAllAuctions()
+    {
+        var result = await _auctionService.GetAuctionsAsync();
 
-            // Act
-            var updatedAuction = await _auctionService.PlaceBidAsync(auctionId, bidAmount);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count());
+        Assert.Contains(result, a => a.ID == "A1");
+        Assert.Contains(result, a => a.ID == "A2");
+    }
 
-            // Assert
-            Assert.NotNull(updatedAuction);
-            Assert.Equal(bidAmount, updatedAuction.CurrentBid);
-        }
+    [Fact]
+    public async Task GetAuctionByIdAsync_ValidId_ReturnsAuction()
+    {
+        var result = await _auctionService.GetAuctionByIdAsync("A1");
 
-        [Fact]
-        public async Task DeleteAuctionAsync_ShouldDeleteAuction()
-        {
-            // Arrange
-            var auctionId = "auction1";
-            var auction = new Auction { ID = auctionId };
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.Setup(m => m.FindAsync(auctionId)).ReturnsAsync(auction);
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
+        Assert.NotNull(result);
+        Assert.Equal("A1", result.ID);
+        Assert.Equal("V1", result.VehicleID);
+    }
 
-            // Act
-            var deletedAuction = await _auctionService.DeleteAuctionAsync(auctionId);
+    [Fact]
+    public async Task GetAuctionByIdAsync_InvalidId_ThrowsKeyNotFoundException()
+    {
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _auctionService.GetAuctionByIdAsync("NonExistentId"));
+    }
 
-            // Assert
-            Assert.NotNull(deletedAuction);
-            Assert.Equal(auctionId, deletedAuction.ID);
-        }
+    [Fact]
+    public async Task StartAuctionAsync_ValidData_CreatesAuction()
+    {
+        var vehicleId = "V2";
+        var startDate = DateTime.Now;
+        var endDate = DateTime.Now.AddDays(7);
+        var newAuctionId = "A3";
 
-        [Fact]
-        public async Task CloseAuctionAsync_ShouldCloseAuction()
-        {
-            // Arrange
-            var auctionId = "auction1";
-            var auction = new Auction { ID = auctionId, IsActive = true };
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.Setup(m => m.FindAsync(auctionId)).ReturnsAsync(auction);
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
+        _mockContext.Setup(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1)
+            .Callback(() => _auctions.Add(new Auction { ID = newAuctionId, VehicleID = vehicleId, StartDate = startDate, EndDate = endDate, IsActive = true, CurrentBid = 45000M }));
 
-            // Act
-            var closedAuction = await _auctionService.CloseAuctionAsync(auctionId);
+        var result = await _auctionService.StartAuctionAsync(vehicleId, startDate, endDate, true, newAuctionId);
 
-            // Assert
-            Assert.NotNull(closedAuction);
-            Assert.False(closedAuction.IsActive);
-        }
+        Assert.NotNull(result);
+        Assert.Equal(newAuctionId, result.ID);
+        Assert.Equal(vehicleId, result.VehicleID);
+        Assert.Equal(startDate, result.StartDate);
+        Assert.Equal(endDate, result.EndDate);
+        Assert.True(result.IsActive);
+        _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
 
-        [Fact]
-        public async Task ActiveAuctionAsync_ShouldActivateAuction()
-        {
-            // Arrange
-            var auctionId = "auction1";
-            var auction = new Auction { ID = auctionId, IsActive = false, VehicleID = "vehicle1" };
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.Setup(m => m.FindAsync(auctionId)).ReturnsAsync(auction);
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
+    [Fact]
+    public async Task PlaceBidAsync_NonExistentAuction_ThrowsKeyNotFoundException()
+    {
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _auctionService.PlaceBidAsync("NonExistentAuction", 50000M));
+    }
 
-            // Act
-            var activeAuction = await _auctionService.ActiveAuctionAsync(auctionId);
+    [Fact]
+    public async Task PlaceBidAsync_BidTooLow_ThrowsInvalidOperationException()
+    {
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _auctionService.PlaceBidAsync("A1", 37000M));
+    }
 
-            // Assert
-            Assert.NotNull(activeAuction);
-            Assert.True(activeAuction.IsActive);
-        }
+    [Fact]
+    public async Task CloseAuctionAsync_ActiveAuction_ClosesAuction()
+    {
+        var auctionId = "A1";
+        var auction = _auctions.First(a => a.ID == auctionId);
 
-        [Fact]
-        public async Task GetAuctionByIdAsync_ShouldReturnAuction()
-        {
-            // Arrange
-            var auctionId = "auction1";
-            var auction = new Auction { ID = auctionId };
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.Setup(m => m.FindAsync(auctionId)).ReturnsAsync(auction);
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
+        _mockContext.Setup(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1)
+            .Callback(() => auction.IsActive = false);
+        _mockContext.Setup(m => m.Auctions.FindAsync(auctionId)).ReturnsAsync(auction);
+        var result = await _auctionService.CloseAuctionAsync(auctionId);
 
-            // Act
-            var result = await _auctionService.GetAuctionByIdAsync(auctionId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(auctionId, result.ID);
-        }
-
-        [Fact]
-        public async Task GetAuctionsAsync_ShouldReturnAllAuctions()
-        {
-            // Arrange
-            var auctions = new List<Auction>
-            {
-                new Auction { ID = "auction1" },
-                new Auction { ID = "auction2" }
-            }.AsQueryable();
-            var dbSetMock = new Mock<DbSet<Auction>>();
-            dbSetMock.As<IQueryable<Auction>>().Setup(m => m.Provider).Returns(auctions.Provider);
-            dbSetMock.As<IQueryable<Auction>>().Setup(m => m.Expression).Returns(auctions.Expression);
-            dbSetMock.As<IQueryable<Auction>>().Setup(m => m.ElementType).Returns(auctions.ElementType);
-            dbSetMock.As<IQueryable<Auction>>().Setup(m => m.GetEnumerator()).Returns(auctions.GetEnumerator());
-            _mockContext.Setup(c => c.Auctions).Returns(dbSetMock.Object);
-
-            // Act
-            var result = await _auctionService.GetAuctionsAsync();
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
-        }
+        Assert.NotNull(result);
+        Assert.Equal(auctionId, result.ID);
+        Assert.False(result.IsActive);
+        _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }

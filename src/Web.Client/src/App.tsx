@@ -10,12 +10,6 @@ const App: React.FC = () => {
     return (
         <Router>
             <div className="d-flex flex-column min-vh-100"
-                style={{
-                    "position": "fixed",
-                    "top": "0",
-                    "left": "0",
-                    "width": "100%"
-                } }
             >
 
                 <Navbar />

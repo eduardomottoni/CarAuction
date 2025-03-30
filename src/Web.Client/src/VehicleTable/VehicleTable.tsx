@@ -72,12 +72,15 @@ const VehiclesTable: React.FC = () => {
         },
         body: JSON.stringify(vehicle)
       });
-      if (!response.ok) throw new Error('Failed to update vehicle');
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(errorBody || 'Unknown error');
+        }
       const updatedVehicle = await response.json();
       setVehicles(vehicles.map(v => v.id === updatedVehicle.id ? updatedVehicle : v));
       setIsModalOpen(false);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to update vehicle');
+        alert(error);
     }
   };
 

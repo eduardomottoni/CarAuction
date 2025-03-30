@@ -153,7 +153,7 @@ namespace Web.API.Services
 
         public async Task<IEnumerable<Auction>> GetAuctionsAsync()
         {
-            var auctionList = await _context.Auctions.AsQueryable().ToListAsync();
+            var auctionList = await _context.Auctions.ToListAsync();
             return auctionList;
         }
 
