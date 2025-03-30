@@ -8,3 +8,9 @@ Web.API/Web.API/.vs/*
 /Web.API/src/bin/Debug/net9.0
 /Web.API/src/obj
 /Web.API/Tests/Unit/obj
+/src/Web.API/bin/Debug/net9.0
+/src/Web.API/obj
+/tests/Integration/bin
+/tests/Integration/obj
+/tests/Unit/bin
+/tests/Unit/obj

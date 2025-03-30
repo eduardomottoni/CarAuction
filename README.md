@@ -8,6 +8,10 @@ adjust the connection string in appsettings.json
 
 
 Steps to run:
+
+docker-compose up --build
+
+
 npm run setup
 npm run dev
 
