@@ -1,23 +1,47 @@
-﻿requirements:
-nodejs
-npm
-dotnet core 9.0
-sqlserver running with server name MSSQLLocalDB
+﻿
+---
 
-prerequisites:
-adjust the connection string to sqlserver in appsettings.json (server name)
+# Auction and Vehicle CRUD Application
 
+## Requirements
 
+- **Node.js**
+- **NPM**
+- **.NET Core 9.0**
+- **SQL Server** (MSSQLLocalDB)
 
-migration:
-dotnet ef migrations add InitialCreate
+## Prerequisites
+
+- Adjust the SQL Server connection string in `appsettings.json` to your local setup.
+
+## Migration
+
+1. Run the following commands to set up the database:
+
+```bash
 dotnet ef database update
+```
 
+## Steps to Run
 
-Steps to run:
+### Backend
 
-docker-compose up --build
+1. Navigate to the backend directory.
+2. Run:
 
+```bash
+dotnet run
+```
 
+### Frontend
+
+1. Navigate to the frontend directory.
+2. Run:
+
+```bash
 npm run build
 npm run dev
+```
+
+---
+
