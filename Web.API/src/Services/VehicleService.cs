@@ -7,8 +7,10 @@ namespace Web.API.Services
     public interface IVehicleService
     {
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
+        Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle);
         Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest);
         Task<Vehicle?> GetVehicleByIdAsync(string id);
+        Task<Vehicle?> DeleteVehicleByIdAsync(string id);
     }
 
     public class VehicleService : IVehicleService
@@ -29,6 +31,18 @@ namespace Web.API.Services
             }
 
             _context.Vehicle.Add(vehicle);
+            await _context.SaveChangesAsync();
+            return vehicle;
+        }
+        public async Task<Vehicle?> UpdateVehicleAsync(Vehicle vehicle)
+        {
+            bool exists = await _context.Vehicle.AnyAsync(v => v.ID == vehicle.ID);
+            if (!exists)
+            {
+                return null;
+            }
+
+            _context.Vehicle.Update(vehicle);
             await _context.SaveChangesAsync();
             return vehicle;
         }
@@ -65,6 +79,18 @@ namespace Web.API.Services
         public async Task<Vehicle?> GetVehicleByIdAsync(string id)
         {
             return await _context.Vehicle.FindAsync(id);
+        }
+
+        public async Task<Vehicle?> DeleteVehicleByIdAsync(string id)
+        {
+            var vehicleToDelete = await _context.Vehicle.FindAsync(id);
+            if (vehicleToDelete == null)
+            {
+                return null;
+            }
+            _context.Vehicle.Remove(vehicleToDelete);
+            await _context.SaveChangesAsync();
+            return vehicleToDelete;
         }
     }
 }

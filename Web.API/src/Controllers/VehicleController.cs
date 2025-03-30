@@ -27,11 +27,35 @@ namespace Web.API.Controllers
             try
             {
                 var addedVehicle = await _vehicleService.AddVehicleAsync(vehicle.FromDTO());
-                return CreatedAtAction(nameof(GetVehicle), new { id = addedVehicle.ID }, addedVehicle);
+                return CreatedAtAction(nameof(GetVehicle), new { id = addedVehicle.ID }, addedVehicle.ToDTO());
             }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
+            }
+
+            
+        }
+        [HttpPut("update")]
+        public async Task<ActionResult<VehicleDTO>> UpdateVehicle(VehicleDTO vehicle)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var addedVehicle = await _vehicleService.UpdateVehicleAsync(vehicle.FromDTO());
+                return CreatedAtAction(nameof(GetVehicle), new { id = addedVehicle.ID }, addedVehicle.ToDTO());
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -47,12 +71,16 @@ namespace Web.API.Controllers
         public async Task<ActionResult<IEnumerable<VehicleDTO>>> GetVehicles(
             [FromBody] VehicleRequest vehicleRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 var vehicles = await _vehicleService.GetVehiclesAsync(vehicleRequest);
                 if (!vehicles.Any())
                     return NotFound("No vehicles found matching the criteria.");
-                var response = vehicles.Select(v => v.ToDTO());
+                var response = vehicles.Select(v => v.ToDTO()).ToList();
                 return Ok(response);
             }
             catch (InvalidOperationException ex)
@@ -97,6 +125,30 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
-       
+        // GET: api/Vehicle/delete/{id}
+        [HttpPost("delete/{id}")]
+        public async Task<ActionResult<VehicleDTO>> DeleteVehicle(string id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return BadRequest("ID is required.");
+                }
+
+                var vehicle = await _vehicleService.DeleteVehicleByIdAsync(id);
+
+                if (vehicle == null)
+                {
+                    return NotFound($"Vehicle with ID {id} not found.");
+                }
+                var response = vehicle.ToDTO();
+                return Ok(response);
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
+        }
     }
 }

@@ -1,13 +1,25 @@
-import './App.css'
-import VehiclesTable from './VehicleList/VechicleList'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AuctionTable from './AuctionsTable';
+import VehicleTable from './VehicleTable';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <>
-      <VehiclesTable></VehiclesTable>
-    </>
-  )
-}
+    <Router>
+      <div>
+        <Navbar />
+        <div className="">
+          <Routes>
+            <Route path="/vehicles" element={<VehicleTable />} />
+            <Route path="/auctions" element={<AuctionTable />} />
+            <Route path="/" element={<VehicleTable />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+};
 
-export default App
+export default App;

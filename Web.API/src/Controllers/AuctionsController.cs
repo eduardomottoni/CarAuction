@@ -104,6 +104,10 @@ namespace Web.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -122,6 +126,10 @@ namespace Web.API.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -160,17 +168,25 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
+        // I could use POST instead of GET if the request allows query
         // GET: api/Auctions
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<AuctionDTO>>> GetAuctions()
         {
-            var auctions = await _auctionService.GetAuctionsAsync();
-            if(auctions == null)
+            try
             {
-                return NotFound();
+                var auctions = await _auctionService.GetAuctionsAsync();
+                if (auctions == null)
+                {
+                    return NotFound();
+                }
+                var response = auctions.Select(v => v.ToDto()).ToList();
+                return Ok(response);
             }
-            
-            return Ok(auctions.Select(v=>v.ToDto()));
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
     }
 

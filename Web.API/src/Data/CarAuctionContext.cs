@@ -10,9 +10,9 @@ namespace Web.API.Data
         public CarAuctionContext(DbContextOptions<CarAuctionContext> options) : base(options)
         {
         }
-        public DbSet<Vehicle> Vehicle { get; set; }
+        public virtual DbSet<Vehicle> Vehicle { get; set; }
         
-        public DbSet<Auction> Auctions { get; set; }
+        public virtual DbSet<Auction> Auctions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

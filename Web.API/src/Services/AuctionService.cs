@@ -37,6 +37,12 @@ namespace Web.API.Services
             {
                 throw new ArgumentException("Start date must be before end date.");
             }
+
+            var vehicleInAuction = _context.Auctions.Select(x => x.VehicleID == vehicleId && x.IsActive);
+            if (vehicleInAuction != null)
+            {
+                throw new InvalidOperationException("Vehicle is already in an active auction.");
+            }
             var id = auctionId ?? Guid.NewGuid().ToString();
             var existingAuction = await _context.Auctions.FindAsync(id);
             if(existingAuction != null)
@@ -141,7 +147,7 @@ namespace Web.API.Services
 
         public async Task<IEnumerable<Auction>> GetAuctionsAsync()
         {
-            var auctionList = await _context.Auctions.ToListAsync();
+            var auctionList = await _context.Auctions.AsQueryable().ToListAsync();
             return auctionList;
         }
 
