@@ -46,27 +46,27 @@ namespace Web.API.Services
             await _context.SaveChangesAsync();
             return vehicle;
         }
-       
-        public IQueryable<Vehicle> GetQuery(VehicleRequest vehicleRequest)
+
+        public IEnumerable<Vehicle> GetQuery(VehicleRequest vehicleRequest)
         {
-            var query = _context.Vehicle.AsQueryable();
+            var vehicles = _context.Vehicle.ToList();  // Load all vehicles into memory
 
             if (!string.IsNullOrEmpty(vehicleRequest.manufacturer))
-                query = query.Where(v => v.Manufacturer.ToLower().Contains(vehicleRequest.manufacturer.ToLower()));
+                vehicles = vehicles.Where(v => v.Manufacturer.ToLower().Contains(vehicleRequest.manufacturer.ToLower())).ToList();
 
             if (!string.IsNullOrEmpty(vehicleRequest.type))
-                query = query.Where(v => v.Type.ToLower() == vehicleRequest.type.ToLower());
+                vehicles = vehicles.Where(v => v.Type.ToLower() == vehicleRequest.type.ToLower()).ToList();
 
             if (vehicleRequest.minPrice.HasValue)
-                query = query.Where(v => v.StartingBid >= vehicleRequest.minPrice.Value);
+                vehicles = vehicles.Where(v => v.StartingBid >= vehicleRequest.minPrice.Value).ToList();
 
             if (vehicleRequest.maxPrice.HasValue)
-                query = query.Where(v => v.StartingBid <= vehicleRequest.maxPrice.Value);
+                vehicles = vehicles.Where(v => v.StartingBid <= vehicleRequest.maxPrice.Value).ToList();
 
             if (!string.IsNullOrEmpty(vehicleRequest.year))
-                query = query.Where(v => v.Year == vehicleRequest.year);
+                vehicles = vehicles.Where(v => v.Year == vehicleRequest.year).ToList();
 
-            return query;
+            return vehicles;
         }
 
         public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest)
@@ -79,10 +79,11 @@ namespace Web.API.Services
                 return vehicles;
             }
 
-            var query = GetQuery(vehicleRequest);
+            var vehiclesQuery = GetQuery(vehicleRequest);
 
-            return await query.ToListAsync();
+            return vehiclesQuery;
         }
+
 
         public async Task<Vehicle?> GetVehicleByIdAsync(string id)
         {

@@ -57,7 +57,7 @@ namespace Web.API.Tests.Services;
             _mockContext = new Mock<CarAuctionContext>(new DbContextOptions<CarAuctionContext>());
             _mockContext.Setup(c => c.Vehicle).ReturnsDbSet(_vehicles);
 
-            _mockContext.Setup(m => m.Vehicle.FindAsync(It.IsAny<object[]>()))
+        _mockContext.Setup(m => m.Vehicle.FindAsync(It.IsAny<object[]>()))
 .ReturnsAsync((object[] ids) => _vehicles.FirstOrDefault(a => a.ID == ids[0] as string));
             
 
