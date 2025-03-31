@@ -5,7 +5,7 @@ using Web.API.Services;
 
 namespace Web.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auction")]
     [ApiController]
     public class AuctionsController : ControllerBase
     {
@@ -16,10 +16,14 @@ namespace Web.API.Controllers
             _auctionService = auctionService;
         }
 
-        // POST: api/Auctions/Start
-        [HttpPost("Start")]
+        [HttpPost("create")]
+        //I did not used AuctionDTO as parameter because it has AuctionID which is required
         public async Task<ActionResult<AuctionDTO>> StartAuction([FromBody] StartAuctionRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 var auction = await _auctionService.StartAuctionAsync(request.VehicleId, request.StartDate, request.EndDate, request.Active, request.AuctionId, request.StartBid);
@@ -39,13 +43,13 @@ namespace Web.API.Controllers
             }
             catch (Exception ex)
             {
+                //Console.WriteLine(ex.Message) could be replaced by logging
                 Console.WriteLine(ex.Message);
                 return Problem();
             }
         }
 
-        // POST: api/Auctions/PlaceBid
-        [HttpPost("PlaceBid")]
+        [HttpPost("placebid")]
         public async Task<ActionResult<AuctionDTO>> PlaceBid([FromBody] PlaceBidRequest request)
         {
             try
@@ -68,8 +72,7 @@ namespace Web.API.Controllers
             }
         }
 
-        // POST: api/Auctions/Close
-        [HttpPost("Close")]
+        [HttpPost("close")]
         public async Task<ActionResult<AuctionDTO>> CloseAuction([FromBody] CloseAuctionRequest request)
         {
             try
@@ -91,8 +94,7 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
-        // POST: api/Auctions/Active
-        [HttpPost("Active")]
+        [HttpPost("active")]
         public async Task<ActionResult<AuctionDTO>> ActiveAuction([FromBody] ActiveAuctionRequest request)
         {
             try
@@ -114,8 +116,7 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
-        // POST: api/Auctions/Delete
-        [HttpPost("Delete")]
+        [HttpPost("delete")]
         public async Task<ActionResult<AuctionDTO>> DeleteAuction([FromBody] DeleteAuctionRequest request)
         {
             try
@@ -137,7 +138,6 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
-        // GET: api/Auctions/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<AuctionDTO>> GetAuction(string? id)
         {
@@ -148,19 +148,15 @@ namespace Web.API.Controllers
                     return BadRequest("Id is required");
                 }
                 var auction = await _auctionService.GetAuctionByIdAsync(id);
-                if (auction == null)
-                {
-                    return NotFound($"Auction with ID {id} not found.");
-                }
                 return Ok(auction.ToDto());
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -169,17 +165,12 @@ namespace Web.API.Controllers
             }
         }
         // I could use POST instead of GET if the request allows query
-        // GET: api/Auctions
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<AuctionDTO>>> GetAuctions()
         {
             try
             {
                 var auctions = await _auctionService.GetAuctionsAsync();
-                if (auctions == null)
-                {
-                    return NotFound();
-                }
                 var response = auctions.Select(v => v.ToDto()).ToList();
                 return Ok(response);
             }
@@ -189,33 +180,4 @@ namespace Web.API.Controllers
             }
         }
     }
-
-    public class StartAuctionRequest
-    {
-        public string VehicleId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public bool Active { get; set; }
-        public string? AuctionId { get; set; }
-        public decimal? StartBid { get; set; }
     }
-
-    public class DeleteAuctionRequest
-    {
-        public string AuctionId { get; set; }
-    }
-    public class PlaceBidRequest
-    {
-        public string AuctionId { get; set; }
-        public decimal BidAmount { get; set; }
-    }
-
-    public class CloseAuctionRequest
-    {
-        public string AuctionId { get; set; }
-    }
-    public class ActiveAuctionRequest
-    {
-        public string AuctionId { get; set; }
-    }
-}

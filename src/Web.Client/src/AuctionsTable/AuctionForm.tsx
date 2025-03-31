@@ -8,7 +8,7 @@ const AuctionForm: React.FC<{ auction?: Auction | null;
       id: auction?.id || '',
       vehicleID: auction?.vehicleID || '',
       currentBid: auction?.currentBid || 0,
-      isActive : auction?.isActive || false,
+      isActive : auction?.isActive || true,
       startDate: auction?.startDate || new Date(),
       endDate: auction?.endDate || new Date()
     });
@@ -71,16 +71,13 @@ const AuctionForm: React.FC<{ auction?: Auction | null;
 
         <div className="mb-3">
           <label className="form-label">Is Active</label>
-          <div className="form-check">
-            <input 
-              className="form-check-input" 
-              type="checkbox" 
-                        name="isActive" 
-              checked={formData.isActive} 
-              onChange={(e) => handleChange(e)} 
+                <input 
+                    className="form-check-input"
+                    type="checkbox"
+                    name="isActive"
+                    checked={formData.isActive}
+                    onChange={(e) => handleChange(e)}
             />
-            <label className="form-check-label">Active</label>
-          </div>
         </div>
         <div className="d-flex justify-content-end">
           <button type="button" className="btn btn-secondary me-2" onClick={onClose}>Cancel</button>

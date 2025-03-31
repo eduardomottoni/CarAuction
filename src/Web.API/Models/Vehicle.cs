@@ -32,10 +32,6 @@ namespace Web.API.Models
         public int? NumberOfSeats { get; set; }
         [MaxLength(20)]
         public string? LoadCapacity { get; set; }
-        public IVehicle FromDTO(VehicleDTO dto)
-        {
-            throw new NotImplementedException();
-        }
 
         public VehicleDTO ToDTO()
         {

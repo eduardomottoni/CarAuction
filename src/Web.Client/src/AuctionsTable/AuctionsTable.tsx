@@ -18,7 +18,7 @@ const AuctionTable: React.FC = () => {
   const fetchAuctions = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${VITE_API_URL}/Auctions`);
+      const response = await fetch(`${VITE_API_URL}/auction`);
       if (!response.ok) throw new Error('Failed to fetch auctions');
       const data = await response.json();
       setAuctions(data);
@@ -31,7 +31,7 @@ const AuctionTable: React.FC = () => {
 
   const handleStartAuction = async (auction: Auction) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Auctions/Start`, {
+      const response = await fetch(`${VITE_API_URL}/auction/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -56,7 +56,7 @@ const AuctionTable: React.FC = () => {
 
     const handleBidRequest = async (auctionId: string, bidAmount:number) => {
         try {
-            const response = await fetch(`${VITE_API_URL}/Auctions/PlaceBid`, {
+            const response = await fetch(`${VITE_API_URL}/auction/placebid`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ auctionId, bidAmount })
@@ -78,7 +78,7 @@ const AuctionTable: React.FC = () => {
 
   const handleCloseAuction = async (auctionId: string) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Auctions/Close`, {
+      const response = await fetch(`${VITE_API_URL}/auction/close`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })
@@ -95,7 +95,7 @@ const AuctionTable: React.FC = () => {
 
   const handleActivateAuction = async (auctionId: string) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Auctions/Active`, {
+      const response = await fetch(`${VITE_API_URL}/auction/active`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })
@@ -112,7 +112,7 @@ const AuctionTable: React.FC = () => {
 
   const handleDeleteAuction = async (auctionId: string) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Auctions/Delete`, {
+      const response = await fetch(`${VITE_API_URL}/auction/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auctionId })

@@ -11,9 +11,7 @@ const App: React.FC = () => {
         <Router>
             <div className="d-flex flex-column min-vh-100"
             >
-
                 <Navbar />
-
                 <div className="container mt-5 pt-3">
                     <Routes>
                         <Route path="/vehicles" element={<VehicleTable />} />

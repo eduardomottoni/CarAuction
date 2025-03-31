@@ -196,11 +196,9 @@ namespace Web.API.Tests.Services;
                 NumberOfDoors = 4
             };
 
-            // Act
-            var result = await _vehicleService.UpdateVehicleAsync(nonExistingVehicle);
+        // Act
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _vehicleService.UpdateVehicleAsync(nonExistingVehicle));
 
-            // Assert
-            Assert.Null(result);
         }
 
         [Fact]
@@ -241,7 +239,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_NoFilters_ReturnsAllVehicles()
     {
         // Arrange
-        var request = new VehicleRequest();
+        var request = new Request();
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);
@@ -255,7 +253,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_FilterByManufacturer_ReturnsFilteredVehicles()
     {
         // Arrange
-        var request = new VehicleRequest { manufacturer = "Tesla" };
+        var request = new Request { manufacturer = "Tesla" };
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);
@@ -270,7 +268,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_FilterByType_ReturnsFilteredVehicles()
     {
         // Arrange
-        var request = new VehicleRequest { type = "Truck" };
+        var request = new Request { type = "Truck" };
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);
@@ -285,7 +283,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_FilterByPriceRange_ReturnsFilteredVehicles()
     {
         // Arrange
-        var request = new VehicleRequest { minPrice = 40000M, maxPrice = 50000M };
+        var request = new Request { minPrice = 40000M, maxPrice = 50000M };
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);
@@ -300,7 +298,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_FilterByYear_ReturnsFilteredVehicles()
     {
         // Arrange
-        var request = new VehicleRequest { year = "2023" };
+        var request = new Request { year = "2023" };
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);
@@ -315,7 +313,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_CombinedFilters_ReturnsFilteredVehicles()
     {
         // Arrange
-        var request = new VehicleRequest
+        var request = new Request
         {
             manufacturer = "Tesla",
             year = "2023",
@@ -338,7 +336,7 @@ namespace Web.API.Tests.Services;
     public async Task GetVehiclesAsync_NoMatchingFilters_ReturnsEmptyList()
     {
         // Arrange
-        var request = new VehicleRequest { manufacturer = "Toyota" };
+        var request = new Request { manufacturer = "Toyota" };
 
         // Act
         var result = await _vehicleService.GetVehiclesAsync(request);

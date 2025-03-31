@@ -25,11 +25,6 @@ namespace Web.API.Models
         [Required]
         public DateTime EndDate { get; set; }
 
-        public IAuction ToAuction(AuctionDTO auctionDTO)
-        {
-            throw new NotImplementedException();
-        }
-
         public AuctionDTO ToDto()
         {
             return (new AuctionDTO

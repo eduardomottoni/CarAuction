@@ -156,7 +156,5 @@ namespace Web.API.Services
             var auctionList = await _context.Auctions.ToListAsync();
             return auctionList;
         }
-
-
     }
 }

@@ -9,6 +9,5 @@
         DateTime StartDate { get; set; }
         DateTime EndDate { get; set; }
         AuctionDTO ToDto();
-        IAuction ToAuction(AuctionDTO auctionDTO);
     }
 }

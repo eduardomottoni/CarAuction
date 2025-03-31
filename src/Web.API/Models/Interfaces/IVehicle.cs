@@ -16,6 +16,5 @@ namespace Web.API.Models.Interfaces
         string? LoadCapacity { get; set; }
 
         VehicleDTO ToDTO();
-        IVehicle FromDTO(VehicleDTO dto);
     }
 }

@@ -5,7 +5,7 @@ using Web.API.Services;
 
 namespace Web.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/vehicle")]
     [ApiController]
     public class VehicleController : ControllerBase
     {
@@ -16,7 +16,6 @@ namespace Web.API.Controllers
             _vehicleService = vehicleService;
         }
 
-        // POST: api/Vehicle
         [HttpPost("register")]
         public async Task<ActionResult<VehicleDTO>> AddVehicle(VehicleDTO vehicle)
         {
@@ -65,11 +64,10 @@ namespace Web.API.Controllers
 
             
         }
-
-        // POST: api/Vehicle
+        //This method uses POST instead of GET because of search parameters
         [HttpPost]
         public async Task<ActionResult<IEnumerable<VehicleDTO>>> GetVehicles(
-            [FromBody] VehicleRequest vehicleRequest)
+            [FromBody] Request vehicleRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -78,8 +76,6 @@ namespace Web.API.Controllers
             try
             {
                 var vehicles = await _vehicleService.GetVehiclesAsync(vehicleRequest);
-                if (!vehicles.Any())
-                    return NotFound("No vehicles found matching the criteria.");
                 var response = vehicles.Select(v => v.ToDTO()).ToList();
                 return Ok(response);
             }
@@ -100,7 +96,6 @@ namespace Web.API.Controllers
             
         }
 
-        // GET: api/Vehicle/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<VehicleDTO>> GetVehicle(string id)
         {
@@ -125,7 +120,6 @@ namespace Web.API.Controllers
                 return Problem();
             }
         }
-        // GET: api/Vehicle/delete/{id}
         [HttpPost("delete/{id}")]
         public async Task<ActionResult<VehicleDTO>> DeleteVehicle(string id)
         {

@@ -12,9 +12,5 @@ namespace Web.API.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public Auction FromDTO()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

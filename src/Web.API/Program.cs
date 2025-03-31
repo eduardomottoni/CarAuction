@@ -6,8 +6,6 @@ using Web.API.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Add services to the container.
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost",
@@ -28,8 +26,6 @@ builder.Services.AddScoped<IAuctionService, AuctionService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<CarAuctionContext>(options =>
@@ -37,7 +33,6 @@ builder.Services.AddDbContext<CarAuctionContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

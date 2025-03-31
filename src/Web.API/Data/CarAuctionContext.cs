@@ -16,11 +16,12 @@ namespace Web.API.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // suppress warning for pending model changes to allow seeding the database for the example api
+            // This line suppress warning for pending model changes to allow seeding the database for the example api
             optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
             base.OnConfiguring(optionsBuilder);
 
         }
+        //Seeding the database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -129,7 +130,6 @@ namespace Web.API.Data
             }
         );
 
-            // Seed Auctions
             modelBuilder.Entity<Auction>().HasData(
                 new Auction
                 {

@@ -36,11 +36,11 @@ const BidForm: React.FC<{
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">ID</label>
-                    <label className="form-control">formData.id</label> 
+                    <label className="form-control">{formData.id}</label> 
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Vehicle Id</label>
-                    <label className="form-control">formData.vehicleID</label>
+                    <label className="form-control">{formData.vehicleID}</label>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Current Bid</label>
@@ -50,8 +50,7 @@ const BidForm: React.FC<{
                         value={bidValue} />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Is Active</label>
-                    <label>{formData.isActive ? "Active" : "Inactive"}</label>
+                    <label className="form-label">{formData.isActive ? "Active" : "Inactive"}</label>
                 </div>
                 <div className="d-flex justify-content-end">
                     <button type="button" className="btn btn-secondary me-2" onClick={onClose}>Cancel</button>

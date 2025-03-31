@@ -25,13 +25,14 @@ const VehiclesTable: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await fetch(`${VITE_API_URL}/Vehicle`, {
+      const response = await fetch(`${VITE_API_URL}/vehicle`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(params)
       });
+        if (!response.ok && response.status == 404) throw new Error('No vehicle found')
       if (!response.ok) throw new Error('Failed to fetch vehicles');
       const data = await response.json();
       setVehicles(data);
@@ -44,7 +45,7 @@ const VehiclesTable: React.FC = () => {
 
   const handleCreate = async (vehicle: Vehicle) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Vehicle/register`, {
+      const response = await fetch(`${VITE_API_URL}/vehicle/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ const VehiclesTable: React.FC = () => {
 
   const handleUpdate = async (vehicle: Vehicle) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Vehicle/update`, {
+      const response = await fetch(`${VITE_API_URL}/vehicle/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ const VehiclesTable: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`${VITE_API_URL}/Vehicle/delete/${id}`, {
+      const response = await fetch(`${VITE_API_URL}/vehicle/delete/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

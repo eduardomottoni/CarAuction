@@ -8,7 +8,7 @@ namespace Web.API.Services
     {
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
         Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle);
-        Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest);
+        Task<IEnumerable<Vehicle>> GetVehiclesAsync(Request vehicleRequest);
         Task<Vehicle?> GetVehicleByIdAsync(string id);
         Task<Vehicle?> DeleteVehicleByIdAsync(string id);
     }
@@ -34,12 +34,12 @@ namespace Web.API.Services
             await _context.SaveChangesAsync();
             return vehicle;
         }
-        public async Task<Vehicle?> UpdateVehicleAsync(Vehicle vehicle)
+        public async Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle)
         {
             bool exists = await _context.Vehicle.AnyAsync(v => v.ID == vehicle.ID);
             if (!exists)
             {
-                return null;
+                throw new KeyNotFoundException("Vehicle not found");
             }
 
             _context.Vehicle.Update(vehicle);
@@ -47,9 +47,9 @@ namespace Web.API.Services
             return vehicle;
         }
 
-        public IEnumerable<Vehicle> GetQuery(VehicleRequest vehicleRequest)
+        public IEnumerable<Vehicle> GetQuery(Request vehicleRequest)
         {
-            var vehicles = _context.Vehicle.ToList();  // Load all vehicles into memory
+            var vehicles = _context.Vehicle.ToList();
 
             if (!string.IsNullOrEmpty(vehicleRequest.manufacturer))
                 vehicles = vehicles.Where(v => v.Manufacturer.ToLower().Contains(vehicleRequest.manufacturer.ToLower())).ToList();
@@ -69,7 +69,7 @@ namespace Web.API.Services
             return vehicles;
         }
 
-        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(VehicleRequest vehicleRequest)
+        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(Request vehicleRequest)
         {
             if (vehicleRequest == null)
             {
