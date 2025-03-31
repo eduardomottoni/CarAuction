@@ -67,7 +67,7 @@ namespace Web.API.Controllers
         //This method uses POST instead of GET because of search parameters
         [HttpPost]
         public async Task<ActionResult<IEnumerable<VehicleDTO>>> GetVehicles(
-            [FromBody] Requests vehicleRequest)
+            [FromBody] Request vehicleRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Web.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return Ok(new List<VehicleDTO>());
             }
             catch (Exception ex)
             {
@@ -93,7 +93,6 @@ namespace Web.API.Controllers
                 return Problem();
             }
 
-            
         }
 
         [HttpGet("{id}")]

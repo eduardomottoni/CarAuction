@@ -221,16 +221,16 @@ namespace Web.API.Tests.Controllers
         {
             // Arrange
             var vehicleRequest = new Request();
-            var errorMessage = "Key not found";
             _mockVehicleService.Setup(s => s.GetVehiclesAsync(It.IsAny<Request>()))
-                .ThrowsAsync(new KeyNotFoundException(errorMessage));
+                .ThrowsAsync(new KeyNotFoundException("No vehicles found matching the criteria."));
 
             // Act
             var result = await _vehicleController.GetVehicles(vehicleRequest);
 
             // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Equal(errorMessage, notFoundResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedList = Assert.IsType<List<VehicleDTO>>(okResult.Value);
+            Assert.Empty(returnedList);
         }
 
         [Fact]

@@ -1,6 +1,6 @@
 ﻿namespace Web.API.Models
 {
-    public class Requests
+    public class Request
     {
         public string? manufacturer { get; set; } = null;
         public string? type { get; set; } = null;

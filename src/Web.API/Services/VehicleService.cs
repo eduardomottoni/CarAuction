@@ -8,7 +8,7 @@ namespace Web.API.Services
     {
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
         Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle);
-        Task<IEnumerable<Vehicle>> GetVehiclesAsync(Requests vehicleRequest);
+        Task<IEnumerable<Vehicle>> GetVehiclesAsync(Request vehicleRequest);
         Task<Vehicle?> GetVehicleByIdAsync(string id);
         Task<Vehicle?> DeleteVehicleByIdAsync(string id);
     }
@@ -47,7 +47,7 @@ namespace Web.API.Services
             return vehicle;
         }
 
-        public IEnumerable<Vehicle> GetQuery(Requests vehicleRequest)
+        public IEnumerable<Vehicle> GetQuery(Request vehicleRequest)
         {
             var vehicles = _context.Vehicle.ToList();
 
@@ -69,7 +69,7 @@ namespace Web.API.Services
             return vehicles;
         }
 
-        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(Requests vehicleRequest)
+        public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(Request vehicleRequest)
         {
             if (vehicleRequest == null)
             {
