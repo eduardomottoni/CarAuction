@@ -17,7 +17,6 @@ namespace Web.API.Controllers
         }
 
         [HttpPost("create")]
-        //I did not used AuctionDTO as parameter because it has AuctionID which is required
         public async Task<ActionResult<AuctionDTO>> StartAuction([FromBody] StartAuctionRequest request)
         {
             if (!ModelState.IsValid)
@@ -43,7 +42,6 @@ namespace Web.API.Controllers
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message) could be replaced by logging
                 Console.WriteLine(ex.Message);
                 return Problem();
             }

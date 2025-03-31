@@ -5,6 +5,12 @@ This led me to include a database and frontend, but I later realized—on the la
 
 ---
 
+## Demo
+
+![Project Demo](./website.gif)
+
+---
+
 ## Requirements
 
 - **Node.js**
@@ -61,6 +67,21 @@ npm run dev
 
 ## Architectural Decisions
 
+### .NET Core 9.0
+There is no reason to start a new project with an older version of .NET Core
+
+### logging
+The placeholder for future logging implementation would be Console.WriteLine for now.
+
+### Design Patterns
+- **Repository Pattern:** To separate the data access logic from the business logic
+- **Dependency Injection:** To inject the repository into the controller
+
+### Attributes
+- **bid as decimal:** For currency values precision
+- **year as string**: To allow input of years like "2022-2023" or "22/23" ; tradeoff: not ideal for searching queries
+- **load capacity as string**: To allow input of values like "1000 kg" or "1 ton"
+
 ### API x Frontend Architecture
 I used a separate API and frontend approach to connect .NET with React.
 - **Pros:** Modularity, flexibility, easy maintenance
@@ -84,6 +105,7 @@ SQL Server was chosen due to its seamless integration with Entity Framework Core
 - Add a UI test project using Jest
 - Add functional tests using Cypress
 - Implement a pipeline to deploy the API, database, and frontend
+- Implement logging with Serilog
 
 ## Issues Encountered
 - Failed to create a pipeline with database migration

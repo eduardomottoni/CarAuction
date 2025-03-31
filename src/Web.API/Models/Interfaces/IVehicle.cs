@@ -13,6 +13,7 @@ namespace Web.API.Models.Interfaces
         string Type { get; set; }
         int? NumberOfDoors { get; set; }
         int? NumberOfSeats { get; set; }
+        //load capacity as string allows enter as 3 tons or 300kg
         string? LoadCapacity { get; set; }
 
         VehicleDTO ToDTO();

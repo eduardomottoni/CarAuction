@@ -67,7 +67,7 @@ namespace Web.API.Controllers
         //This method uses POST instead of GET because of search parameters
         [HttpPost]
         public async Task<ActionResult<IEnumerable<VehicleDTO>>> GetVehicles(
-            [FromBody] Request vehicleRequest)
+            [FromBody] Requests vehicleRequest)
         {
             if (!ModelState.IsValid)
             {

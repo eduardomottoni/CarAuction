@@ -49,16 +49,24 @@ namespace Web.API.Services
             {
                 throw new InvalidOperationException("Auction with ID already exists.");
             }
-
-            var auction = new Auction
+            decimal bidValue = 0;
+            if(startingBid != null && startingBid != 0 && startingBid > vehicle.StartingBid)
             {
-                ID = id,
-                VehicleID = vehicleId,
-                CurrentBid = startingBid ?? vehicle.StartingBid,
-                IsActive = isActive,
-                StartDate = startDate,
-                EndDate = endDate
-            };
+                bidValue = startingBid ?? vehicle.StartingBid;
+            }
+            else
+            {
+                bidValue = vehicle.StartingBid;
+            }
+                var auction = new Auction
+                {
+                    ID = id,
+                    VehicleID = vehicleId,
+                    CurrentBid = bidValue,
+                    IsActive = isActive,
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
 
             _context.Auctions.Add(auction);
             await _context.SaveChangesAsync();

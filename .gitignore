@@ -14,3 +14,4 @@ Web.API/Web.API/.vs/*
 /tests/Integration/obj
 /tests/Unit/bin
 /tests/Unit/obj
+/src/Web.API/Web.API.csproj.user
