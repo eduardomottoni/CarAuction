@@ -3,6 +3,7 @@
 I started planning the architecture by defining the data structure, endpoints, and frontend. 
 This led me to include a database and frontend, but I later realized—on the last day of the project—that these were not actual requirements.
 
+
 ---
 
 ## Demo
@@ -21,10 +22,6 @@ This led me to include a database and frontend, but I later realized—on the la
 ### .NET Core 9.0
 There is no reason to start a new project with an older version of .NET Core
 
-### Design Patterns
-- **Repository Pattern:** To separate the data access logic from the business logic
-- **Dependency Injection:** To inject the repository into the controller
-
 ### Attributes
 - **bid as decimal:** For currency values precision
 - **year as string**: To allow input of years like "2022-2023" or "22/23" ; tradeoff: not ideal for searching queries
@@ -33,11 +30,11 @@ There is no reason to start a new project with an older version of .NET Core
 ### API x Frontend Architecture
 I used a separate API and frontend approach to connect .NET with React.
 - **Pros:** Modularity, flexibility, easy maintenance
-- **Cons:** Requires a proxy (CORS) to connect with the backend
+- **Cons:** Requires a proxy (CORS) to connect with the backend; two SDK to manage (npm and dotnet)
 
 ### Frontend - React with Bootstrap
 I chose React with Bootstrap because a simple UI was required for the job.
-- **Pros:** Easy to use, modern UI
+- **Pros:** Easy to use, modern UI, pre-built components
 - **Cons:** More dependencies to manage
 
 ### Database - SQL Server
@@ -54,6 +51,9 @@ SQL Server was chosen due to its seamless integration with Entity Framework Core
 - Add functional tests using Cypress
 - Implement a pipeline to deploy the API, database, and frontend
 - Implement logging with Serilog
+- Create a global error handler
+- Add a caching layer
+- Add a validation layer using FluentValidation
 
 ## Issues Encountered
 - Failed to create a pipeline with database migration
@@ -103,6 +103,7 @@ dotnet run
 2. Run:
 
 ```bash
+npm install
 npm run build
 npm run dev
 ```
